@@ -284,7 +284,7 @@ public class Reach extends Check implements PacketCheck {
 
     // Returns a pair so we can check the block type in the flag
     @Nullable
-    private Pair<Double, HitData> getTargetBlock(GrimPlayer player, List<Vector> possibleLookDirs, Vector3d from, double minDistance) {
+    private Pair<Double, HitData> getTargetBlock(GrimPlayer player, List<Vector> possibleLookDirs, Vector3d from, double  minDistance) {
         // Check every possible look direction and every possible eye height
         // IF *NONE* of them allow the player to hit the entity, this is an invalid hit
         HitData bestHitData = null;

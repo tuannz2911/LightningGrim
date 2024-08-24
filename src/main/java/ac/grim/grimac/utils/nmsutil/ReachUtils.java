@@ -1,15 +1,80 @@
 package ac.grim.grimac.utils.nmsutil;
 
 
+import ac.grim.grimac.checks.type.BlockPlaceCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
 import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.math.VectorUtils;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 public class ReachUtils {
+
+    public static Pair<Vector, BlockFace> calculateIntercept(SimpleCollisionBox self, Vector origin, Vector end, GrimPlayer player, StateType itemInHand) {
+        // First, calculate the direction of the ray
+        Vector direction = end.subtract(origin).normalize();
+
+        // Calculate the total distance from origin to end
+        double totalDistance = origin.distance(end);
+
+        // Create the Ray object
+//        Ray ray = new Ray(origin, direction);
+
+        // Start checking for blocks along the ray path
+        double stepSize = 0.5; // The distance to step along the ray, can be adjusted
+        Vector currentPoint = origin;
+        double distanceSquaredToEnd = origin.distanceSquared(end);
+
+        Pair<Vector, BlockFace> vectorBlockFacePair;
+
+        while (currentPoint.distanceSquared(origin) < distanceSquaredToEnd) {
+            // Get the block at the current position
+            SimpleCollisionBox blockBox = BlockPlaceCheck.getBoundingBoxForBlock(player, itemInHand, currentPoint.getBlockX(), currentPoint.getBlockY(), currentPoint.getBlockZ());
+
+            if (blockBox != null) {
+                vectorBlockFacePair = calculateIntercept(blockBox, currentPoint, end);
+                System.out.println("Hit Block: " + player.compensatedWorld.getWrappedBlockStateAt(currentPoint).getType() + " at " + currentPoint.getX() + " " + currentPoint.getY() + " " + currentPoint.getZ());
+
+                return vectorBlockFacePair;
+
+//                // Check if the ray intersects with this block's bounding box
+//                Vector intersectionPoint = blockBox.intersectsRay(ray, 0,
+//                    (float) totalDistance);
+//                if (intersectionPoint != null) {
+//                    // Determine the face of the block that was hit
+//                    BlockFace hitFace = determineBlockFace(intersectionPoint, blockBox);
+//                    System.out.println("Hit Block: " + player.compensatedWorld.getWrappedBlockStateAt(intersectionPoint).getType() + " at " + intersectionPoint.getX() + " " + intersectionPoint.getY() + " " + intersectionPoint.getZ());
+//                    return new Pair<>(intersectionPoint, hitFace);
+//                }
+            }
+
+            // Move to the next point along the ray
+            currentPoint = currentPoint.add(direction.multiply(stepSize));
+        }
+
+        // If no obstacles are found, check the target block's bounding box
+        return calculateIntercept(self, origin, end);
+    }
+
+
+    private static BlockFace determineBlockFace(Vector intersectionPoint, SimpleCollisionBox blockBox) {
+        // Determine which face of the block was hit by comparing the intersection point to the bounding box
+        if (intersectionPoint.getX() == blockBox.minX) return BlockFace.WEST;
+        if (intersectionPoint.getX() == blockBox.maxX) return BlockFace.EAST;
+        if (intersectionPoint.getY() == blockBox.minY) return BlockFace.DOWN;
+        if (intersectionPoint.getY() == blockBox.maxY) return BlockFace.UP;
+        if (intersectionPoint.getZ() == blockBox.minZ) return BlockFace.NORTH;
+        if (intersectionPoint.getZ() == blockBox.maxZ) return BlockFace.SOUTH;
+        return null;
+    }
+
+
     // Copied from 1.8... I couldn't figure out 1.14+. "Enterprise" java code is unreadable!
     public static Pair<Vector, BlockFace> calculateIntercept(SimpleCollisionBox self, Vector origin, Vector end) {
         Vector minX = getIntermediateWithXValue(origin, end, self.minX);

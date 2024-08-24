@@ -6,6 +6,7 @@ import ac.grim.grimac.utils.anticheat.update.BlockPlace;
 import ac.grim.grimac.utils.collisions.HitboxData;
 import ac.grim.grimac.utils.collisions.datatypes.CollisionBox;
 import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.defaulttags.BlockTags;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
@@ -13,6 +14,7 @@ import com.github.retrooper.packetevents.util.Vector3i;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.util.Vector;
 
 public class BlockPlaceCheck extends Check implements RotationCheck {
     private static final List<StateType> weirdBoxes = new ArrayList<>();
@@ -62,6 +64,46 @@ public class BlockPlaceCheck extends Check implements RotationCheck {
         buggyBoxes.add(StateTypes.WEEPING_VINES);
         buggyBoxes.add(StateTypes.WEEPING_VINES_PLANT);
         buggyBoxes.add(StateTypes.REDSTONE_WIRE);
+    }
+
+    public static SimpleCollisionBox getBoundingBoxForBlock(GrimPlayer player, StateType itemInHand, int x, int y, int z) {
+        // This method should return the bounding box for the given block
+        // If the block is air or otherwise non-collidable, return null
+        // - Paper doc says it checks if getType() returns Material.AIR
+        // - Does this work for Cave Air and Void Air?
+        WrappedBlockState wrappedBlockState = player.compensatedWorld.getWrappedBlockStateAt(x, y, z);
+
+        if (wrappedBlockState == null || wrappedBlockState.getType().isAir()) {
+            return null;
+        }
+        CollisionBox collisionBox = HitboxData.getBlockHitbox(player, itemInHand, player.getClientVersion(), wrappedBlockState, x, y, z);
+
+        List<SimpleCollisionBox> boxes = new ArrayList<>();
+        collisionBox.downCast(boxes);
+
+        SimpleCollisionBox combined = new SimpleCollisionBox(x, y, z);
+        for (SimpleCollisionBox box : boxes) {
+            double minX = Math.max(box.minX, combined.minX);
+            double minY = Math.max(box.minY, combined.minY);
+            double minZ = Math.max(box.minZ, combined.minZ);
+            double maxX = Math.min(box.maxX, combined.maxX);
+            double maxY = Math.min(box.maxY, combined.maxY);
+            double maxZ = Math.min(box.maxZ, combined.maxZ);
+            combined = new SimpleCollisionBox(minX, minY, minZ, maxX, maxY, maxZ);
+        }
+
+        if (weirdBoxes.contains(wrappedBlockState.getType())) {
+            // Invert the box to give lenience
+            combined = new SimpleCollisionBox(x + 1, y + 1, z + 1, x, y, x);
+        }
+
+        if (buggyBoxes.contains(wrappedBlockState.getType())) {
+            // Invert the bounding box to give a block of lenience
+            combined = new SimpleCollisionBox(x + 1, y + 1, z + 1, x, y, z);
+        }
+
+        // Account for 0.03/0.0002 bug
+        return combined.expand(player.getMovementThreshold() * -1);
     }
 
     protected SimpleCollisionBox getCombinedBox(final BlockPlace place) {
