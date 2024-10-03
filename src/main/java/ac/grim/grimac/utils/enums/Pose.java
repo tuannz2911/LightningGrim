@@ -1,12 +1,12 @@
 package ac.grim.grimac.utils.enums;
 
 public enum Pose {
-    STANDING(0.6f, 1.8f, 1.62f),
     FALL_FLYING(0.6f, 0.6f, 0.4f),
-    SLEEPING(0.2f, 0.2f, 0.2f),
-    SWIMMING(0.6f, 0.6f, 0.4f),
     SPIN_ATTACK(0.6f, 0.6f, 0.4f),
+    SWIMMING(0.6f, 0.6f, 0.4f),
     CROUCHING(0.6f, 1.5f, 1.27f),
+    STANDING(0.6f, 1.8f, 1.62f),
+    SLEEPING(0.2f, 0.2f, 0.2f),
     DYING(0.2f, 0.2f, 0.2f),
 
     // Non-player poses

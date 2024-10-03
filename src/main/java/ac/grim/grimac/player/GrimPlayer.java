@@ -590,7 +590,6 @@ public class GrimPlayer implements GrimUser {
                 case SPIN_ATTACK: // Riptide trident
                 case SWIMMING: // Swimming (includes crawling in 1.14+)
                     return this.possibleEyeHeights[2]; // [swimming/gliding/riptide height, standing height, sneaking height]
-                case NINE_CROUCHING:
                 case CROUCHING:
                     return this.possibleEyeHeights[1]; // [sneaking height, standing height, swimming/gliding/riptide height]
                 default:
