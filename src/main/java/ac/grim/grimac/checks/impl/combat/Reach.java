@@ -293,7 +293,7 @@ public class Reach extends Check implements PacketCheck {
         for (Vector lookVec : possibleLookDirs) {
             for (double eye : player.getPossibleEyeHeights()) {
                 Vector eyes = new Vector(from.getX(), from.getY() + eye, from.getZ());
-                final double reach = player.compensatedEntities.getSelf().getBlockInteractRange();
+                final double reach = player.compensatedEntities.getSelf().getAttributeValue(Attributes.PLAYER_BLOCK_INTERACTION_RANGE);
                 final HitData hitResult = BlockRayTrace.getNearestReachHitResult(player, eyes, lookVec, minDistance, reach);
                 if (hitResult == null) {
                     return null;
