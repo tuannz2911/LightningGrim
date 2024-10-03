@@ -241,11 +241,10 @@ public class Reach extends Check implements PacketCheck {
             }
         }
 
-        final boolean experimentalChecks = true; //GrimAPI.INSTANCE.getConfigManager().isExperimentalChecks(); // TODO fix for undraft
         HitData foundHitData = null;
         // If the entity is within range of the player (we'll flag anyway if not, so no point checking blocks in this case)
         // Ignore when could be hitting through a moving shulker, piston blocks. They are just too glitchy/uncertain to check.
-        if (experimentalChecks && minDistance <= 3 && !player.compensatedWorld.isNearHardEntity(player.boundingBox.copy().expand(4))) {
+        if (minDistance <= 3 && !player.compensatedWorld.isNearHardEntity(player.boundingBox.copy().expand(4))) {
             final @Nullable Pair<Double, HitData> targetBlock = getTargetBlock(player, possibleLookDirs, from, minDistance);
             // And if the target block is closer to the player than the entity box, they should hit the block instead
             // So, this hit is invalid.
