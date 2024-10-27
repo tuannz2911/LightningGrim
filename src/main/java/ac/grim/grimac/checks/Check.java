@@ -55,7 +55,7 @@ public class Check implements AbstractCheck, ConfigReloadObserver {
             this.description = checkData.description();
         }
         //
-        reload(GrimAPI.INSTANCE.getConfigManager().getConfig());
+        reload();
     }
 
     public boolean shouldModifyPackets() {
@@ -82,7 +82,7 @@ public class Check implements AbstractCheck, ConfigReloadObserver {
     }
 
     public final boolean flag() {
-        if (player.disableGrim || (experimental && !GrimAPI.INSTANCE.getConfigManager().isExperimentalChecks()) || exempted)
+        if (player.disableGrim || (experimental && !player.isExperimentalChecks()) || exempted)
             return false; // Avoid calling event if disabled
 
         FlagEvent event = new FlagEvent(player, this);
