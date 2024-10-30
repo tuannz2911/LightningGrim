@@ -337,15 +337,16 @@ public class CheckManager {
         for (AbstractCheck check : allChecks.values()) {
             if (check.getCheckName() != null) {
                 String permissionName = "grim.exempt." + check.getCheckName().toLowerCase();
-                try {
+                Permission permission = Bukkit.getPluginManager().getPermission(permissionName);
+
+                if (permission == null) {
                     Bukkit.getPluginManager().addPermission(new Permission(permissionName, PermissionDefault.FALSE));
-                } catch (IllegalArgumentException e) {
-                    LogUtil.error("Failed to add permission \"" + permissionName + "\" for check " + check.getCheckName());
-                    e.printStackTrace();
+                } else {
+                    permission.setDefault(PermissionDefault.FALSE);
                 }
             }
         }
+
         inited = true;
     }
-
 }
