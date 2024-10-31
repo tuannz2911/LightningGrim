@@ -1,6 +1,5 @@
 package ac.grim.grimac.manager;
 
-
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.checks.impl.aim.AimDuplicateLook;
 import ac.grim.grimac.checks.impl.aim.AimModulo360;
@@ -33,6 +32,7 @@ import ac.grim.grimac.manager.init.start.SuperDebug;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.predictionengine.GhostBlockDetector;
 import ac.grim.grimac.predictionengine.SneakingEstimator;
+import ac.grim.grimac.utils.anticheat.LogUtil;
 import ac.grim.grimac.utils.anticheat.update.*;
 import ac.grim.grimac.utils.latency.CompensatedCooldown;
 import ac.grim.grimac.utils.latency.CompensatedFireworks;
@@ -42,8 +42,13 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 public class CheckManager {
+    private static boolean inited;
+
     ClassToInstanceMap<PacketCheck> packetChecks;
     ClassToInstanceMap<PositionCheck> positionCheck;
     ClassToInstanceMap<RotationCheck> rotationCheck;
@@ -139,6 +144,7 @@ public class CheckManager {
                 .put(InvalidPlaceA.class, new InvalidPlaceA(player))
                 .put(InvalidPlaceB.class, new InvalidPlaceB(player))
                 .put(AirLiquidPlace.class, new AirLiquidPlace(player))
+                .put(MultiPlace.class, new MultiPlace(player))
                 .put(FarPlace.class, new FarPlace(player))
                 .put(FabricatedPlace.class, new FabricatedPlace(player))
                 .put(PositionPlace.class, new PositionPlace(player))
@@ -171,6 +177,8 @@ public class CheckManager {
                 .putAll(blockPlaceCheck)
                 .putAll(prePredictionChecks)
                 .build();
+
+        init();
     }
 
     @SuppressWarnings("unchecked")
@@ -201,6 +209,9 @@ public class CheckManager {
         for (PostPredictionCheck check : postPredictionCheck.values()) {
             check.onPacketReceive(packet);
         }
+        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+            check.onPacketReceive(packet);
+        }
     }
 
     public void onPacketSend(final PacketSendEvent packet) {
@@ -211,6 +222,9 @@ public class CheckManager {
             check.onPacketSend(packet);
         }
         for (PostPredictionCheck check : postPredictionCheck.values()) {
+            check.onPacketSend(packet);
+        }
+        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
             check.onPacketSend(packet);
         }
     }
@@ -238,6 +252,9 @@ public class CheckManager {
 
     public void onPredictionFinish(final PredictionComplete complete) {
         for (PostPredictionCheck check : postPredictionCheck.values()) {
+            check.onPredictionComplete(complete);
+        }
+        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
             check.onPredictionComplete(complete);
         }
     }
@@ -313,5 +330,23 @@ public class CheckManager {
     @SuppressWarnings("unchecked")
     public <T extends PostPredictionCheck> T getPostPredictionCheck(Class<T> check) {
         return (T) postPredictionCheck.get(check);
+    }
+
+    private void init() {
+        if (inited) return;
+        for (AbstractCheck check : allChecks.values()) {
+            if (check.getCheckName() != null) {
+                String permissionName = "grim.exempt." + check.getCheckName().toLowerCase();
+                Permission permission = Bukkit.getPluginManager().getPermission(permissionName);
+
+                if (permission == null) {
+                    Bukkit.getPluginManager().addPermission(new Permission(permissionName, PermissionDefault.FALSE));
+                } else {
+                    permission.setDefault(PermissionDefault.FALSE);
+                }
+            }
+        }
+
+        inited = true;
     }
 }
