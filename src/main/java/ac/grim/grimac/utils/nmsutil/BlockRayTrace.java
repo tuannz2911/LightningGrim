@@ -17,6 +17,7 @@ import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3i;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class BlockRayTrace {
     //
     // I do have to admit that I'm starting to like bifunctions/new java 8 things more than I originally did.
     // although I still don't understand Mojang's obsession with streams in some of the hottest methods... that kills performance
+    @Nullable
     public static Pair<int[], BlockFace> traverseBlocksLOSP(GrimPlayer player, double[] start, double[] end, BiFunction<WrappedBlockState, int[], Pair<int[], BlockFace>> predicate) {
         // I guess go back by the collision epsilon?
         double endX = GrimMath.lerp(-1.0E-7D, end[0], start[0]);
@@ -172,7 +174,8 @@ public class BlockRayTrace {
         return traverseBlocks(player, new double[]{start.x, start.y, start.z}, new double[]{end.x, end.y, end.z}, predicate);
     }
 
-    public static Pair<int[], BlockFace> getNearestReachHitResult(GrimPlayer player, double[] eyePos, double[] lookVec, double currentDistance, double maxDistance, int[] targetBlockVec, BlockFace expectedBlockFace) {
+    @Nullable
+    public static Pair<@NotNull int[], @NotNull BlockFace> getNearestReachHitResult(GrimPlayer player, double[] eyePos, double[] lookVec, double currentDistance, double maxDistance, int[] targetBlockVec) {
         double[] endPos = new double[]{
                 eyePos[0] + lookVec[0] * maxDistance,
                 eyePos[1] + lookVec[1] * maxDistance,
