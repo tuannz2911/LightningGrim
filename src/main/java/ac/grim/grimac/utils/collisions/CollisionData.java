@@ -24,6 +24,7 @@ import com.viaversion.viaversion.api.Via;
 import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 // Warning for major game updates!
 // Do not use an enum for stuff like Axis and other data types not in 1.7
@@ -791,7 +792,14 @@ public enum CollisionData {
 
     CORAL_PLANT((player, version, data, x, y, z) -> {
         return new HexCollisionBox(2.0D, 0.0D, 2.0D, 14.0D, 15.0D, 14.0D);
-    }, BlockTags.CORAL_PLANTS.getStates().toArray(new StateType[0])),
+    }, Stream.concat(
+                    Arrays.stream(BlockTags.CORAL_PLANTS.getStates().toArray(new StateType[0])),
+                    Stream.of(StateTypes.DEAD_HORN_CORAL, StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL,
+                            StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL)
+            )
+            .distinct()  // This will remove duplicates
+            .toArray(StateType[]::new)
+    ),
 
     SIGN(new SimpleCollisionBox(0.25, 0.0, 0.25, 0.75, 1.0, 0.75, false),
             BlockTags.STANDING_SIGNS.getStates().toArray(new StateType[0])),
