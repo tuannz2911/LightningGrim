@@ -32,6 +32,7 @@ import ac.grim.grimac.manager.init.start.SuperDebug;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.predictionengine.GhostBlockDetector;
 import ac.grim.grimac.predictionengine.SneakingEstimator;
+import ac.grim.grimac.utils.anticheat.LogUtil;
 import ac.grim.grimac.utils.anticheat.update.*;
 import ac.grim.grimac.utils.latency.CompensatedCooldown;
 import ac.grim.grimac.utils.latency.CompensatedFireworks;
@@ -333,11 +334,16 @@ public class CheckManager {
 
     private void init() {
         if (inited) return;
-
         for (AbstractCheck check : allChecks.values()) {
             if (check.getCheckName() != null) {
-                Permission permission = new Permission("grim.exempt." + check.getCheckName().toLowerCase(), PermissionDefault.FALSE);
-                Bukkit.getPluginManager().addPermission(permission);
+                String permissionName = "grim.exempt." + check.getCheckName().toLowerCase();
+                Permission permission = Bukkit.getPluginManager().getPermission(permissionName);
+
+                if (permission == null) {
+                    Bukkit.getPluginManager().addPermission(new Permission(permissionName, PermissionDefault.FALSE));
+                } else {
+                    permission.setDefault(PermissionDefault.FALSE);
+                }
             }
         }
 
