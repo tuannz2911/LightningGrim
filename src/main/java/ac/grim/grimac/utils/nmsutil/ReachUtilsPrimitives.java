@@ -5,9 +5,11 @@ import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
 import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class ReachUtilsPrimitives {
-    public static Pair<double[], BlockFace> calculateIntercept(SimpleCollisionBox self, double[] origin, double[] end) {
+    public static @NotNull Pair<@Nullable double[], @Nullable  BlockFace> calculateIntercept(SimpleCollisionBox self, double[] origin, double[] end) {
         double[] minX = getIntermediateWithXValue(origin, end, self.minX);
         double[] maxX = getIntermediateWithXValue(origin, end, self.maxX);
         double[] minY = getIntermediateWithYValue(origin, end, self.minY);
