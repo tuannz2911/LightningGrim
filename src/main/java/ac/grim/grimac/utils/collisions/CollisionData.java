@@ -403,33 +403,6 @@ public enum CollisionData {
         return new HexCollisionBox(1.0D, 0.0D, 1.0D, 15.0D, 15.0D, 15.0D); // post
     }, StateTypes.HONEY_BLOCK),
 
-    SPORE_BLOSSOM(new HexCollisionBox(2.0D, 13.0D, 2.0D, 14.0D, 16.0D, 14.0D), StateTypes.SPORE_BLOSSOM),
-
-    GLOW_LICHEN((player, version, data, x, y, z) -> {
-        ComplexCollisionBox box = new ComplexCollisionBox();
-
-        if (data.isUp()) {
-            box.add(new HexCollisionBox(0.0D, 15.0D, 0.0D, 16.0D, 16.0D, 16.0D));
-        }
-        if (data.isDown()) {
-            box.add(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D));
-        }
-        if (data.getWest() == West.TRUE) {
-            box.add(new HexCollisionBox(0.0D, 0.0D, 0.0D, 1.0D, 16.0D, 16.0D));
-        }
-        if (data.getEast() == East.TRUE) {
-            box.add(new HexCollisionBox(15.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D));
-        }
-        if (data.getNorth() == North.TRUE) {
-            box.add(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 1.0D));
-        }
-        if (data.getSouth() == South.TRUE) {
-            box.add(new HexCollisionBox(0.0D, 0.0D, 15.0D, 16.0D, 16.0D, 16.0D));
-        }
-
-        return box;
-    }, StateTypes.GLOW_LICHEN),
-
     DRAGON_EGG_BLOCK(new HexCollisionBox(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D), StateTypes.DRAGON_EGG),
 
     GRINDSTONE((player, version, data, x, y, z) -> {
