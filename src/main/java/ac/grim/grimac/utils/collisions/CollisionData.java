@@ -882,7 +882,13 @@ public enum CollisionData {
 
     SCULK_SENSOR(new HexCollisionBox(0.0, 0.0, 0.0, 16.0, 8.0, 16.0), StateTypes.SCULK_SENSOR, StateTypes.CALIBRATED_SCULK_SENSOR),
 
-    DECORATED_POT(new HexCollisionBox(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0), StateTypes.DECORATED_POT),
+    DECORATED_POT((player, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_19_3)) {
+            return new HexCollisionBox(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0);
+        } else { // ViaVersion replacement is a Brick
+            return new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true);
+        }
+    }, StateTypes.DECORATED_POT),
 
     BIG_DRIPLEAF((player, version, data, x, y, z) -> {
         if (version.isOlderThanOrEquals(ClientVersion.V_1_16_4))
@@ -994,7 +1000,13 @@ public enum CollisionData {
         }
     }, StateTypes.MANGROVE_PROPAGULE),
 
-    SCULK_SHRIKER(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), StateTypes.SCULK_SHRIEKER),
+    SCULK_SHRIKER((player, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_18_2)) {
+            return new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
+        } else {
+            return new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true);
+        }
+    }, StateTypes.SCULK_SHRIEKER),
 
     FROGSPAWN(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 1.5D, 16.0D), StateTypes.FROGSPAWN),
 
