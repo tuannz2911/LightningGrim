@@ -1017,13 +1017,17 @@ public enum CollisionData {
     }, StateTypes.SNIFFER_EGG),
 
     PITCHER_CROP((player, version, data, x, y, z) -> {
-        final SimpleCollisionBox COLLISION_SHAPE_BULB = new HexCollisionBox(5.0D, -1.0D, 5.0D, 11.0D, 3.0D, 11.0D);
-        final SimpleCollisionBox COLLISION_SHAPE_CROP = new HexCollisionBox(3.0D, -1.0D, 3.0D, 13.0D, 5.0D, 13.0D);
+        if (version.isNewerThan(ClientVersion.V_1_19_4)) {
+            final SimpleCollisionBox COLLISION_SHAPE_BULB = new HexCollisionBox(5.0D, -1.0D, 5.0D, 11.0D, 3.0D, 11.0D);
+            final SimpleCollisionBox COLLISION_SHAPE_CROP = new HexCollisionBox(3.0D, -1.0D, 3.0D, 13.0D, 5.0D, 13.0D);
 
-        if (data.getAge() == 0) {
-            return COLLISION_SHAPE_BULB;
+            if (data.getAge() == 0) {
+                return COLLISION_SHAPE_BULB;
+            } else {
+                return data.getHalf() == Half.LOWER ? COLLISION_SHAPE_CROP : NoCollisionBox.INSTANCE;
+            }
         } else {
-            return data.getHalf() == Half.LOWER ? COLLISION_SHAPE_CROP : NoCollisionBox.INSTANCE;
+            return NoCollisionBox.INSTANCE;
         }
     }, StateTypes.PITCHER_CROP),
 
