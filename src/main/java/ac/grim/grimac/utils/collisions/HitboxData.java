@@ -8,6 +8,7 @@ import ac.grim.grimac.utils.collisions.datatypes.*;
 import ac.grim.grimac.utils.nmsutil.Materials;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.protocol.world.Direction;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.defaulttags.BlockTags;
 import com.github.retrooper.packetevents.protocol.world.states.enums.*;
@@ -422,8 +423,6 @@ public enum HitboxData {
 
     CORAL_FAN(new HexCollisionBox(2.0D, 0.0D, 2.0D, 14.0D, 4.0D, 14.0D), BlockTags.CORALS.getStates().toArray(new StateType[0])),
 
-    PINK_PETALS_BLOCK(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D), StateTypes.PINK_PETALS),
-
     TORCHFLOWER_CROP((player, item, version, data, x, y, z) -> {
         if (data.getAge() == 0) {
             return new HexCollisionBox(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
@@ -521,6 +520,36 @@ public enum HitboxData {
 
     }, StateTypes.BIG_DRIPLEAF),
 
+    PINK_PETALS_BLOCK((player, item, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_20_2)) {
+            int flowerAmount = data.getFlowerAmount();
+            int horizontalIndex = getHorizontalID(data.getFacing());
+
+            CollisionBox result = NoCollisionBox.INSTANCE;
+
+            // Pre-defined collision boxes for each quadrant
+            HexCollisionBox[] boxes = new HexCollisionBox[] {
+                    new HexCollisionBox(8, 0, 8, 16, 3, 16),  // SE
+                    new HexCollisionBox(8, 0, 0, 16, 3, 8),   // NE
+                    new HexCollisionBox(0, 0, 0, 8, 3, 8),    // NW
+                    new HexCollisionBox(0, 0, 8, 8, 3, 16)    // SW
+            };
+
+            // Add boxes based on flower amount and facing
+            for (int i = 0; i < flowerAmount; i++) {
+                int index = Math.floorMod(i - horizontalIndex, 4);
+                result = result.union(boxes[index]);
+            }
+
+            return result;
+        } else if (version.isNewerThan(ClientVersion.V_1_19_3)) {
+            return new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
+        } else if (version.isNewerThan(ClientVersion.V_1_12_2)) {
+            return CORAL_FAN.dynamic.fetch(player, item, version, data, x, y, z);
+        }
+        return GRASS_FERN.dynamic.fetch(player, item, version, data, x, y, z);
+    }, StateTypes.PINK_PETALS),
+
     MANGROVE_PROPAGULE(((player, item, version, data, x, y, z) -> {
         if (data.isHanging()) {
             return new HexOffsetCollisionBox(data.getType(), 7.0, 0.0, 7.0, 9.0, 16.0, 9.0);
@@ -528,7 +557,6 @@ public enum HitboxData {
             return new HexOffsetCollisionBox(data.getType(), 7.0, getPropaguleMinHeight(data.getAge()), 7.0, 9.0, 16.0, 9.0);
         }
     }), StateTypes.MANGROVE_PROPAGULE);
-
 
     private static final Map<StateType, HitboxData> lookup = new HashMap<>();
 
@@ -592,5 +620,22 @@ public enum HitboxData {
                 return (4 - age) * 3;
         }
         throw new IllegalStateException("Impossible Propagule Height");
+    }
+
+    private static int getHorizontalID(BlockFace facing) {
+        switch (facing) {
+            case DOWN:
+            case UP:
+                return -1;
+            case NORTH:
+                return 2;
+            case SOUTH:
+                return 0;
+            case WEST:
+                return 1;
+            case EAST:
+                return 3;
+        }
+        throw new IllegalStateException("Impossible blockface for getHorizontalID");
     }
 }
