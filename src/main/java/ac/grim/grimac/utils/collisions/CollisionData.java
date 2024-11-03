@@ -702,17 +702,36 @@ public enum CollisionData {
     }, StateTypes.END_ROD, StateTypes.LIGHTNING_ROD),
 
     CAULDRON((player, version, data, x, y, z) -> {
-        double height = 0.25;
+        if (version.isNewerThan(ClientVersion.getById(467))) { // changed in 19w13a, 1.14 Snapshot
+            return new ComplexCollisionBox(
+                    new SimpleCollisionBox(0.0, 0.0, 0.0, 0.125, 1.0, 0.25, false),
+                    new SimpleCollisionBox(0.0, 0.0, 0.75, 0.125, 1.0, 1.0, false),
+                    new SimpleCollisionBox(0.125, 0.0, 0.0, 0.25, 1.0, 0.125, false),
+                    new SimpleCollisionBox(0.125, 0.0, 0.875, 0.25, 1.0, 1.0, false),
+                    new SimpleCollisionBox(0.75, 0.0, 0.0, 1.0, 1.0, 0.125, false),
+                    new SimpleCollisionBox(0.75, 0.0, 0.875, 1.0, 1.0, 1.0, false),
+                    new SimpleCollisionBox(0.875, 0.0, 0.125, 1.0, 1.0, 0.25, false),
+                    new SimpleCollisionBox(0.875, 0.0, 0.75, 1.0, 1.0, 0.875, false),
+                    new SimpleCollisionBox(0.0, 0.1875, 0.25, 1.0, 0.25, 0.75, false),
+                    new SimpleCollisionBox(0.125, 0.1875, 0.125, 0.875, 0.25, 0.25, false),
+                    new SimpleCollisionBox(0.125, 0.1875, 0.75, 0.875, 0.25, 0.875, false),
+                    new SimpleCollisionBox(0.25, 0.1875, 0.0, 0.75, 1.0, 0.125, false),
+                    new SimpleCollisionBox(0.25, 0.1875, 0.875, 0.75, 1.0, 1.0, false),
+                    new SimpleCollisionBox(0.0, 0.25, 0.25, 0.125, 1.0, 0.75, false),
+                    new SimpleCollisionBox(0.875, 0.25, 0.25, 1.0, 1.0, 0.75, false)
+            );
+        } else {
+            double height = 0.25;
+            if (version.isOlderThan(ClientVersion.V_1_13))
+                height = 0.3125;
 
-        if (version.isOlderThan(ClientVersion.V_1_13))
-            height = 0.3125;
-
-        return new ComplexCollisionBox(
-                new SimpleCollisionBox(0, 0, 0, 1, height, 1, false),
-                new SimpleCollisionBox(0, height, 0, 0.125, 1, 1, false),
-                new SimpleCollisionBox(1 - 0.125, height, 0, 1, 1, 1, false),
-                new SimpleCollisionBox(0, height, 0, 1, 1, 0.125, false),
-                new SimpleCollisionBox(0, height, 1 - 0.125, 1, 1, 1, false));
+            return new ComplexCollisionBox(
+                    new SimpleCollisionBox(0, 0, 0, 1, height, 1, false),
+                    new SimpleCollisionBox(0, height, 0, 0.125, 1, 1, false),
+                    new SimpleCollisionBox(1 - 0.125, height, 0, 1, 1, 1, false),
+                    new SimpleCollisionBox(0, height, 0, 1, 1, 0.125, false),
+                    new SimpleCollisionBox(0, height, 1 - 0.125, 1, 1, 1, false));
+        }
     }, BlockTags.CAULDRONS.getStates().toArray(new StateType[0])),
 
     CACTUS(new SimpleCollisionBox(0.0625, 0, 0.0625,
@@ -788,7 +807,7 @@ public enum CollisionData {
     }, Stream.concat(
                     Arrays.stream(BlockTags.CORAL_PLANTS.getStates().toArray(new StateType[0])),
                     Stream.of(StateTypes.DEAD_HORN_CORAL, StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL,
-                            StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL)
+                            StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL)
             )
             .distinct()  // This will remove duplicates
             .toArray(StateType[]::new)
