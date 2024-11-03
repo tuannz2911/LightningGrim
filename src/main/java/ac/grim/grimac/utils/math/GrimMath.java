@@ -113,27 +113,4 @@ public class GrimMath {
         l = l * l * 42317861L + l * 11L;
         return l >> 16;
     }
-
-    public static BlockFace getFacing(double x, double y, double z) {
-        return getFacing((float)x, (float)y, (float)z);
-    }
-
-    public static BlockFace getFacing(float x, float y, float z) {
-        BlockFace direction = BlockFace.NORTH;
-        float f = Float.MIN_VALUE;
-
-        for (BlockFace direction2 : BlockFace.values()) {
-            float g = x * (float)direction2.getModX() + y * (float)direction2.getModY() + z * (float)direction2.getModZ();
-            if (g > f) {
-                f = g;
-                direction = direction2;
-            }
-        }
-
-        return direction;
-    }
-
-    public static BlockFace getFacing(Vector3d vec) {
-        return getFacing(vec.x, vec.y, vec.z);
-    }
 }
