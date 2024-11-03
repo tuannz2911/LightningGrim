@@ -194,8 +194,6 @@ public enum CollisionData {
         }
     }, StateTypes.PIGLIN_WALL_HEAD),
 
-    CORAL_FAN(new HexCollisionBox(2.0D, 0.0D, 2.0D, 14.0D, 4.0D, 14.0D), BlockTags.CORALS.getStates().toArray(new StateType[0])),
-
     DOOR(new DoorHandler(), BlockTags.DOORS.getStates().toArray(new StateType[0])),
 
     HOPPER((player, version, data, x, y, z) -> {
@@ -259,6 +257,8 @@ public enum CollisionData {
 
         return new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D);
     }, StateTypes.STONECUTTER),
+
+    CORAL_FAN(NoCollisionBox.INSTANCE, BlockTags.CORALS.getStates().toArray(new StateType[0])),
 
     RAILS(NoCollisionBox.INSTANCE, BlockTags.RAILS.getStates().toArray(new StateType[0])),
 
