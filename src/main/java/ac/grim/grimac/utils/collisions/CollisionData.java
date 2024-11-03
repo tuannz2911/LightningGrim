@@ -1008,9 +1008,13 @@ public enum CollisionData {
         }
     }, StateTypes.SCULK_SHRIEKER),
 
-    FROGSPAWN(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 1.5D, 16.0D), StateTypes.FROGSPAWN),
-
-    SNIFFER_EGG(new HexCollisionBox(1.0D, 0.0D, 2.0D, 15.0D, 16.0D, 14.0D), StateTypes.SNIFFER_EGG),
+    SNIFFER_EGG((player, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_19_4)) {
+            return new HexCollisionBox(1.0D, 0.0D, 2.0D, 15.0D, 16.0D, 14.0D);
+        } else {
+            return new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true);
+        }
+    }, StateTypes.SNIFFER_EGG),
 
     PITCHER_CROP((player, version, data, x, y, z) -> {
         final SimpleCollisionBox COLLISION_SHAPE_BULB = new HexCollisionBox(5.0D, -1.0D, 5.0D, 11.0D, 3.0D, 11.0D);
