@@ -357,7 +357,7 @@ public enum HitboxData {
         return common;
     }, StateTypes.LECTERN),
 
-    GLOW_LICHEN_SCULK_CATALYST((player, item, version, data, x, y, z) -> {
+    GLOW_LICHEN_SCULK_VEIN((player, item, version, data, x, y, z) -> {
         if (version.isNewerThan(ClientVersion.V_1_16_4)) {
             ComplexCollisionBox box = new ComplexCollisionBox();
 
@@ -496,9 +496,18 @@ public enum HitboxData {
 
     CAVE_VINES(new HexCollisionBox(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D), StateTypes.CAVE_VINES, StateTypes.CAVE_VINES_PLANT),
 
-    TWISTING_VINES_BLOCK(new HexCollisionBox(4.0D, 0.0D, 4.0D, 12.0D, 15.0D, 12.0D), StateTypes.TWISTING_VINES, StateTypes.WEEPING_VINES),
+    // Then your enum entries become:
+    TWISTING_VINES_BLOCK((player, item, version, data, x, y, z) ->
+            getVineCollisionBox(version, false, true), StateTypes.TWISTING_VINES),
 
-    TWISTING_VINES(new HexCollisionBox(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D), StateTypes.TWISTING_VINES_PLANT, StateTypes.WEEPING_VINES_PLANT),
+    WEEPING_VINES_BLOCK((player, item, version, data, x, y, z) ->
+            getVineCollisionBox(version, true, true), StateTypes.WEEPING_VINES),
+
+    TWISTING_VINES((player, item, version, data, x, y, z) ->
+            getVineCollisionBox(version, false, false), StateTypes.TWISTING_VINES_PLANT),
+
+    WEEPING_VINES((player, item, version, data, x, y, z) ->
+            getVineCollisionBox(version, true, false), StateTypes.WEEPING_VINES_PLANT),
 
     TALL_PLANT(new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true), StateTypes.TALL_GRASS, StateTypes.LARGE_FERN),
 
@@ -671,6 +680,26 @@ public enum HitboxData {
                 return (4 - age) * 3;
         }
         throw new IllegalStateException("Impossible Propagule Height");
+    }
+
+    private static CollisionBox getVineCollisionBox(ClientVersion version, boolean isWeeping, boolean isBlock) {
+        if (version.isNewerThan(ClientVersion.V_1_15_2)) {
+            if (isWeeping) {
+                return isBlock
+                        ? new HexCollisionBox(4.0, 9.0, 4.0, 12.0, 16.0, 12.0)
+                        : new HexCollisionBox(1.0, 0.0, 1.0, 15.0, 16.0, 15.0);
+            } else {
+                return new HexCollisionBox(4.0D, 0.0D, 4.0D, 12.0D, isBlock ? 15.0D : 16.0D, 12.0D);
+            }
+        } else {
+            // Via replacement - 4 sided vine
+            return new ComplexCollisionBox(
+                    new HexCollisionBox(0.0D, 0.0D, 0.0D, 1.0D, 16.0D, 16.0D),
+                    new HexCollisionBox(15.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D),
+                    new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 1.0D),
+                    new HexCollisionBox(0.0D, 0.0D, 15.0D, 16.0D, 16.0D, 16.0D)
+            );
+        }
     }
 
     private static int getHorizontalID(BlockFace facing) {
