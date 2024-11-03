@@ -10,6 +10,11 @@ public class NoCollisionBox implements CollisionBox {
     }
 
     @Override
+    public CollisionBox union(SimpleCollisionBox other) {
+        return other;
+    }
+
+    @Override
     public boolean isCollided(SimpleCollisionBox other) {
         return false;
     }
