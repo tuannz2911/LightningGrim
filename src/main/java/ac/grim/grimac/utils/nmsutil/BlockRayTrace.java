@@ -183,7 +183,7 @@ public class BlockRayTrace {
         return traverseBlocks(player, startPos, endPos, (block, vector3i) -> {
             CollisionBox data;
             if (!raycastContext) {
-                data = HitboxData.getBlockHitbox(player, null, player.getClientVersion(), block, vector3i.x, vector3i.y, vector3i.z);
+                data = HitboxData.getBlockHitbox(player, player.getInventory().getHeldItem().getType().getPlacedType(), player.getClientVersion(), block, vector3i.x, vector3i.y, vector3i.z);
             } else {
                 data = RaycastData.getBlockHitbox(player, null, player.getClientVersion(), block, vector3i.x, vector3i.y, vector3i.z);
             }

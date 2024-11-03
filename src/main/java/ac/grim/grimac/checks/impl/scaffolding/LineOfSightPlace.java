@@ -71,7 +71,6 @@ public class LineOfSightPlace extends BlockPlaceCheck {
 
     private boolean checkIfShouldSkip(BlockPlace place) {
         StateType targetBlockStateType = player.compensatedWorld.getWrappedBlockStateAt(place.getPlacedAgainstBlockLocation()).getType();
-        if (place.getMaterial() == StateTypes.SCAFFOLDING) return true; // Scaffolding
         if (player.gamemode == GameMode.SPECTATOR) return true; // A waste to check creative mode players
         if (targetBlockStateType == StateTypes.REDSTONE_WIRE) return true; // Redstone too buggy
         if (player.compensatedWorld.isNearHardEntity(player.boundingBox.copy().expand(4))) return true; // Shulkers and Pistons are too buggy
