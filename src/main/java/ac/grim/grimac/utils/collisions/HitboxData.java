@@ -520,8 +520,8 @@ public enum HitboxData {
     }, StateTypes.BAMBOO_SAPLING),
 
     SCAFFOLDING((player, item, version, data, x, y, z) -> {
-        // If is holding scaffolding
-        if (item == StateTypes.SCAFFOLDING) {
+        // If is holding scaffolding or Via replacement - hay bale
+        if (item == StateTypes.SCAFFOLDING || version.isOlderThan(ClientVersion.V_1_14)) {
             return new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true);
         }
 
