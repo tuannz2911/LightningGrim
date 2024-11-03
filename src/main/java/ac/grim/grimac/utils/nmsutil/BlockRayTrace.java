@@ -221,17 +221,28 @@ public class BlockRayTrace {
                 }
             }
 
+            // Yes, this is not the most optimal algorithm for handling Cauldrons, Hoppers, Composters, and Scaffolding
+            //   that is to say, blocks that have a different outline/hitbox shape from the box used to calculate placement blockfaces
+            //   but it is the one vanilla uses
+            // No we will not
+            // 1. Calculate the ray trace from a new closer startPos to reduce iterations
+            //    because it adds a lot of code complexity for very little performance gain
+            // 2. Run a switch case on the target block and check if the index of the SimpleCollisionBox corresponds to a wall with an inside face
+            //    and hardcode in blockface fixes for placements against those compnents above a certain relative y level
+            //    because that is version-specific, will break if the implementation of the returned ComplexCollisionBox changes
+            //    and again, lots of code complexity for little performance gain
             if (bestHitLoc != null) {
                 HitData hitData = new HitData(vector3i, new Vector(bestHitLoc[0], bestHitLoc[1], bestHitLoc[2]), bestFace, block);
-//        if (hitData != null) {
                 if (!raycastContext) {
                     HitData hitData2 = BlockRayTrace.getNearestReachHitResult(player, startPos, lookVec, maxDistance, maxDistance, targetBlockVec, true);
-                    if (hitData2 != null && hitData2.getBlockHitLocation().subtract(new Vector(startPos[0], startPos[1], startPos[2])).lengthSquared() < hitData.getBlockHitLocation().subtract(new Vector(startPos[0], startPos[1], startPos[2])).lengthSquared()) {
-//                    return new Vector3i(targetBlockVec[0], targetBlockVec[1], targetBlockVec[2]).equals(hitData.getPosition()) && hitData2.getClosestDirection() == expectedBlockFace;
-                        return new HitData(vector3i, hitData.getBlockHitLocation(), hitData2.getClosestDirection(), block);
+                    if (hitData2 != null) {
+                        Vector startVector = new Vector(startPos[0], startPos[1], startPos[2]);
+                        if (hitData2.getBlockHitLocation().subtract(startVector).lengthSquared() <
+                                hitData.getBlockHitLocation().subtract(startVector).lengthSquared()) {
+                            return new HitData(vector3i, hitData.getBlockHitLocation(), hitData2.getClosestDirection(), block);
+                        }
                     }
                 }
-//        }
                 return hitData;
             }
 
