@@ -357,6 +357,37 @@ public enum HitboxData {
         return common;
     }, StateTypes.LECTERN),
 
+    GLOW_LICHEN_SCULK_CATALYST((player, item, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_16_4)) { // Newer than 1.16.5, which has same PVN
+            ComplexCollisionBox box = new ComplexCollisionBox();
+
+            if (data.isUp()) {
+                box.add(new HexCollisionBox(0.0D, 15.0D, 0.0D, 16.0D, 16.0D, 16.0D));
+            }
+            if (data.isDown()) {
+                box.add(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D));
+            }
+            if (data.getWest() == West.TRUE) {
+                box.add(new HexCollisionBox(0.0D, 0.0D, 0.0D, 1.0D, 16.0D, 16.0D));
+            }
+            if (data.getEast() == East.TRUE) {
+                box.add(new HexCollisionBox(15.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D));
+            }
+            if (data.getNorth() == North.TRUE) {
+                box.add(new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 1.0D));
+            }
+            if (data.getSouth() == South.TRUE) {
+                box.add(new HexCollisionBox(0.0D, 0.0D, 15.0D, 16.0D, 16.0D, 16.0D));
+            }
+
+            return box;
+        } else { // ViaVersion just replaces this with... nothing
+            return NoCollisionBox.INSTANCE;
+        }
+    }, StateTypes.GLOW_LICHEN, StateTypes.SCULK_CATALYST),
+
+    SPORE_BLOSSOM(new HexCollisionBox(2.0D, 13.0D, 2.0D, 14.0D, 16.0D, 14.0D), StateTypes.SPORE_BLOSSOM),
+
     PITCHER_CROP((player, item, version, data, x, y, z) -> {
         final SimpleCollisionBox FULL_UPPER_SHAPE = new HexCollisionBox(3.0D, 0.0D, 3.0D, 13.0D, 15.0D, 13.0D);
         final SimpleCollisionBox FULL_LOWER_SHAPE = new HexCollisionBox(3.0D, -1.0D, 3.0D, 13.0D, 16.0D, 13.0D);
