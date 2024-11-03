@@ -592,7 +592,10 @@ public enum HitboxData {
         } else {
             return new HexOffsetCollisionBox(data.getType(), 7.0, getPropaguleMinHeight(data.getAge()), 7.0, 9.0, 16.0, 9.0);
         }
-    }), StateTypes.MANGROVE_PROPAGULE);
+    }), StateTypes.MANGROVE_PROPAGULE),
+
+    // always a fullblock hitbox. Via replacement is obsidian
+    SCULK_SHRIKER(new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true), StateTypes.SCULK_SHRIEKER);
 
     private static final Map<StateType, HitboxData> lookup = new HashMap<>();
 
