@@ -358,7 +358,7 @@ public enum HitboxData {
     }, StateTypes.LECTERN),
 
     GLOW_LICHEN_SCULK_CATALYST((player, item, version, data, x, y, z) -> {
-        if (version.isNewerThan(ClientVersion.V_1_16_4)) { // Newer than 1.16.5, which has same PVN
+        if (version.isNewerThan(ClientVersion.V_1_16_4)) {
             ComplexCollisionBox box = new ComplexCollisionBox();
 
             if (data.isUp()) {
@@ -386,7 +386,13 @@ public enum HitboxData {
         }
     }, StateTypes.GLOW_LICHEN, StateTypes.SCULK_CATALYST),
 
-    SPORE_BLOSSOM(new HexCollisionBox(2.0D, 13.0D, 2.0D, 14.0D, 16.0D, 14.0D), StateTypes.SPORE_BLOSSOM),
+    SPORE_BLOSSOM((player, item, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_16_4)) {
+            return new HexCollisionBox(2.0D, 13.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+        } else { // ViaVersion replacement is a Peony
+            return new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true);
+        }
+    }, StateTypes.SPORE_BLOSSOM),
 
     PITCHER_CROP((player, item, version, data, x, y, z) -> {
         final SimpleCollisionBox FULL_UPPER_SHAPE = new HexCollisionBox(3.0D, 0.0D, 3.0D, 13.0D, 15.0D, 13.0D);
