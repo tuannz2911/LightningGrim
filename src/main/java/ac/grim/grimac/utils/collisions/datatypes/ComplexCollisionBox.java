@@ -17,6 +17,12 @@ public class ComplexCollisionBox implements CollisionBox {
     }
 
     @Override
+    public CollisionBox union(SimpleCollisionBox other) {
+        add(other);
+        return this;
+    }
+
+    @Override
     public boolean isCollided(SimpleCollisionBox other) {
         for (CollisionBox box : boxes) {
             if (box.isCollided(other)) return true;

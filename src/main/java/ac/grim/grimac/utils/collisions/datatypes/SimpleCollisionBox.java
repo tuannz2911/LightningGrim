@@ -163,7 +163,8 @@ public class SimpleCollisionBox implements CollisionBox {
         return vectors;
     }
 
-    public SimpleCollisionBox union(SimpleCollisionBox other) {
+    @Override
+    public CollisionBox union(SimpleCollisionBox other) {
         this.minX = Math.min(this.minX, other.minX);
         this.minY = Math.min(this.minY, other.minY);
         this.minZ = Math.min(this.minZ, other.minZ);

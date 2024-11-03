@@ -5,6 +5,8 @@ import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import java.util.List;
 
 public interface CollisionBox {
+    CollisionBox union(SimpleCollisionBox other);
+
     boolean isCollided(SimpleCollisionBox other);
 
     boolean isIntersected(SimpleCollisionBox other);
