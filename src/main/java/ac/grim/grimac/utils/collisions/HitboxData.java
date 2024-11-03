@@ -594,6 +594,14 @@ public enum HitboxData {
         }
     }), StateTypes.MANGROVE_PROPAGULE),
 
+    FROGSPAWN((player, item, version, data, x, y, z) -> {
+        if (version.isNewerThan(ClientVersion.V_1_18_2)) {
+            return new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 1.5D, 16.0D);
+        } else { // ViaVersion just replaces this with... nothing
+            return NoCollisionBox.INSTANCE;
+        }
+    }, StateTypes.FROGSPAWN),
+
     // always a fullblock hitbox. Via replacement is obsidian
     SCULK_SHRIKER(new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true), StateTypes.SCULK_SHRIEKER);
 
