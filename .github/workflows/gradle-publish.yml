@@ -27,7 +27,13 @@ jobs:
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-
+    - name: List all files in workspace
+    run: |
+      echo "Listing all files"
+      dir /s  # Trên Windows
+    # hoặc
+      ls -R  # Trên Linux/macOS
+      
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
